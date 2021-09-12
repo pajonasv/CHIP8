@@ -37,12 +37,15 @@ public:
 	//keypad
 	unsigned char key[16]; //1 byte each
 
+
 	
 	bool drawFlag;
 	bool clearScreenFlag;
+
+	bool debugMode;
 	chip8();
 	void initialize();
-	bool loadProgram(const char * filename);
+	bool loadProgram(char * filename);
 	void emulateCycle();
 
 };

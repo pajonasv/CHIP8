@@ -3,6 +3,7 @@
 chip8::chip8() {
 	srand(time(NULL));
 	drawFlag = false;
+	debugMode = false;
 }
 
 
@@ -47,36 +48,46 @@ void chip8::initialize() {
 }
 
 
-bool chip8::loadProgram(const char* filename) {
+bool chip8::loadProgram(char* filename) {
 	std::ifstream progfile;
-    progfile.open(filename,std::ifstream::binary);
+	progfile.open(filename, std::ifstream::binary);
 	if (progfile.fail()) {
+
+		std::cout << "Error 2: could not find file" << filename << std::endl;
 		return false;
 	}
 	char byte;
 	int i = 0;
+
 	while (progfile.read(&byte, 1)) {
+		if (i + 512 > 4095) {
+			std::cout << "Error 3: file size is too big." << std::endl;
+			return false;
+		}
 		memory[i + 512] = byte;
 		i++;
 	}
-	for (int i = 0; i < sizeof(memory); i++) {
-		if (i % 10 == 0) {
-			std::cout << std::dec <<std::endl << i << ": ";
+
+	if (debugMode) {
+		for (int i = 0; i < sizeof(memory); i++) {
+			if (i % 10 == 0) {
+				std::cout << std::dec << std::endl << i << ": ";
+			}
+
+			std::cout << std::hex << (int)memory[i] << " ";
+
 		}
-
-		std::cout << std::hex<< (int)memory[i] << " ";
-		
+		std::cout << std::endl;
 	}
-	std::cout << std::endl;
-	
-
+	return true;
 }
 void chip8::emulateCycle() {
 	// Fetch Opcode
 	currentOpcode = memory[pc] << 8 | memory[pc + 1];
 	// Decode Opcode
-
-	std::cout << currentOpcode << std::endl;
+	if (debugMode) {
+		std::cout << std::hex << pc << " " << currentOpcode << std::endl << std::dec;
+	}
 
 	//OPCODE DESCRIPTIONS ARE FROM WIKIPEDIA
 	//https://en.wikipedia.org/wiki/CHIP-8#Virtual_machine_description
@@ -261,13 +272,17 @@ void chip8::emulateCycle() {
 
 			for (int xline = 0; xline < 8; xline++) {
 				if ((pixel & (0x80 >> xline)) != 0) {
-					if (gfx[(x + xline + ((y + yline) * 64))] == 1) {
+					if (gfx[(x + xline + ((y + yline) * 64)) % (64 * 32)] == 1) {
 						V[0xF] = 1;
 					}
-					gfx[x + xline + ((y + yline) * 64)] ^= 1;
+					gfx[(x + xline + ((y + yline) * 64)) % (64 * 32)] ^= 1;
 				}
 			}
 		}
+
+
+
+
 		drawFlag = true;
 		pc += 2;
 	}
@@ -347,63 +362,63 @@ void chip8::emulateCycle() {
 				break;
 
 			case 0x01:
-				ir = 0x50 + 1;
+				ir = 0x50 + 1*5;
 				break;
 
 			case 0x02:
-				ir = 0x50 + 2;
+				ir = 0x50 + 2 * 5;
 				break;
 
 			case 0x03:
-				ir = 0x50 + 3;
+				ir = 0x50 + 3 * 5;
 				break;
 
 			case 0x04:
-				ir = 0x50 + 4;
+				ir = 0x50 + 4 * 5;
 				break;
 
 			case 0x05:
-				ir = 0x50 + 5;
+				ir = 0x50 + 5 * 5;
 				break;
 
 			case 0x06:
-				ir = 0x50 + 6;
+				ir = 0x50 + 6 * 5;
 				break;
 
 			case 0x07:
-				ir = 0x50 + 7;
+				ir = 0x50 + 7 * 5;
 				break;
 
 			case 0x08:
-				ir = 0x50 + 8;
+				ir = 0x50 + 8 * 5;
 				break;
 
 			case 0x09:
-				ir = 0x50 + 9;
+				ir = 0x50 + 9 * 5;
 				break;
 
 			case 0x0A:
-				ir = 0x50 + 10;
+				ir = 0x50 + 10 * 5;
 				break;
 
 			case 0x0B:
-				ir = 0x50 + 11;
+				ir = 0x50 + 11 * 5;
 				break;
 
 			case 0x0C:
-				ir = 0x50 + 12;
+				ir = 0x50 + 12 * 5;
 				break;
 
 			case 0x0D:
-				ir = 0x50 + 13;
+				ir = 0x50 + 13 * 5;
 				break;
 
 			case 0x0E:
-				ir = 0x50 + 14;
+				ir = 0x50 + 14 * 5;
 				break;
 
 			case 0x0F:
-				ir = 0x50 + 15;
+				ir = 0x50 + 15 * 5;
 				break;
 
 

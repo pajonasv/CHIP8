@@ -26,14 +26,21 @@ SDL_Renderer* ren;
 
 int main(int argc, char* argv[]) {
 
-	for (int i = 1; i < argc ; ++i) {
-		std::cout << "argv[" << i << "] is " << argv[i] << std::endl;
+
+	for (int i = 0; i < argc; i++) {
+		std::cout << i << " " << argv[i] << std::endl;
+	
 	}
-	if (argc == 1) {
+	if (argc < 2) {
+		std::cout << "Error 0: open with file." << std::endl;
 		return 1;
 
 	}
 
+
+	
+
+	
 	if (!setupSDL()) {
 		return 1;
 	}
@@ -50,7 +57,12 @@ int main(int argc, char* argv[]) {
 
 	chip.initialize();
 
-	chip.loadProgram(argv[1]);
+
+
+	"C:\\Users\\marat\\source\\repos\\chip8\\games\\";
+	if (!chip.loadProgram(argv[1])) {
+		return 1;
+	}
 
 	
 
@@ -63,6 +75,7 @@ int main(int argc, char* argv[]) {
 	int pixelX;
 	int pixelY;
 	double cycleSpeed = CLOCKS_PER_SEC / 360;
+	bool uncapFPS = false;
 
     //While application is running
     while (running){
@@ -169,6 +182,17 @@ int main(int argc, char* argv[]) {
 				case SDLK_BACKSPACE:
 					chip.initialize();
 					break;
+				case SDLK_SPACE:
+					uncapFPS = true;
+					break;
+				case SDLK_RSHIFT:
+					if (chip.debugMode == false) {
+						chip.debugMode = true;
+					}
+					else {
+						chip.debugMode = false;
+					}
+					break;
 				}
 				//reset
 				
@@ -239,6 +263,9 @@ int main(int argc, char* argv[]) {
 
 					chip.key[0x0F] = 0;
 					break;
+				case SDLK_SPACE:
+					uncapFPS = false;
+					break;
 				}
 				break;
 
@@ -286,7 +313,7 @@ int main(int argc, char* argv[]) {
 
 		dur = std::chrono::system_clock::now() - t;
 
-		if (dur.count() < cycleSpeed) {
+		if (dur.count() < cycleSpeed && !uncapFPS) {
 			Sleep((int)(cycleSpeed - dur.count()));
 		}
 	
@@ -314,7 +341,7 @@ bool setupSDL() {
 		return false;
 	}
 	//window										   xpos, ypos, sizes,     flags 
-	win = SDL_CreateWindow("Ey", 100, 100, 640, 320, SDL_WINDOW_SHOWN );
+	win = SDL_CreateWindow("Chip8", 100, 100, 640, 320, SDL_WINDOW_SHOWN );
 	if (win == nullptr) {
 		logSDLError();
 		SDL_Quit();
@@ -329,4 +356,5 @@ bool setupSDL() {
 		SDL_Quit();
 		return false;
 	}
+	return true;
 }
