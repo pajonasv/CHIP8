@@ -2,6 +2,8 @@
 #undef main
 #include <iostream>
 #include <time.h>
+
+#include <chrono>
 #include "chip8.h"
 
 #ifdef _WIN32 || _WIN64
@@ -55,15 +57,16 @@ int main(int argc, char* argv[]) {
 	SDL_Color color{ 255,255,255,255 };
 	SDL_RenderClear(ren);
 
-
-	clock_t t;
-	int cycle = 0;
+	std::chrono::system_clock::time_point t;
+	std::chrono::duration<double, std::milli> dur;
 	int screenW = sizeof(chip.gfx) * 8;
 	int pixelX;
 	int pixelY;
-	t = clock();
+	double cycleSpeed = CLOCKS_PER_SEC / 360;
+
     //While application is running
     while (running){
+		t = std::chrono::system_clock::now();
         //Handle events on queue
         while (SDL_PollEvent(&e) != 0){
             //User requests quit
@@ -281,8 +284,12 @@ int main(int argc, char* argv[]) {
 			chip.drawFlag = false;
 		}
 
-		cycle++;
-		
+		dur = std::chrono::system_clock::now() - t;
+
+		if (dur.count() < cycleSpeed) {
+			Sleep((int)(cycleSpeed - dur.count()));
+		}
+	
     }
 
 	SDL_DestroyRenderer(ren);

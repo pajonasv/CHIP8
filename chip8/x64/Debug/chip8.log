@@ -1,1 +1,4 @@
-﻿  chip8.vcxproj -> C:\Users\marat\source\repos\chip8\x64\Debug\chip8.exe
+﻿  Source.cpp
+C:\Users\marat\source\repos\chip8\chip8\Source.cpp(9,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\marat\source\repos\chip8\chip8\Source.cpp(332): warning C4715: 'setupSDL': not all control paths return a value
+  chip8.vcxproj -> C:\Users\marat\source\repos\chip8\x64\Debug\chip8.exe
