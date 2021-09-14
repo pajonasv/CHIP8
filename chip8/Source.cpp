@@ -57,9 +57,6 @@ int main(int argc, char* argv[]) {
 
 	chip.initialize();
 
-
-
-	"C:\\Users\\marat\\source\\repos\\chip8\\games\\";
 	if (!chip.loadProgram(argv[1])) {
 		return 1;
 	}

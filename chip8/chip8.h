@@ -45,7 +45,7 @@ public:
 	bool debugMode;
 	chip8();
 	void initialize();
-	bool loadProgram(char * filename);
+	bool loadProgram(const char * filename);
 	void emulateCycle();
 
 };

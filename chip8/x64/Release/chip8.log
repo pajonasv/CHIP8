@@ -1,8 +1,10 @@
 ﻿  Source.cpp
 C:\Users\marat\source\repos\chip8\chip8\Source.cpp(9,1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  chip8.cpp
+C:\Users\marat\source\repos\chip8\chip8\chip8.cpp(4,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
   Generating code
-  2 of 168 functions ( 1.2%) were compiled, the rest were copied from previous compilation.
+  6 of 168 functions ( 3.6%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    3 functions had inline decision re-evaluated but remain unchanged
+    1 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   chip8.vcxproj -> C:\Users\marat\source\repos\chip8\x64\Release\chip8.exe

@@ -48,7 +48,7 @@ void chip8::initialize() {
 }
 
 
-bool chip8::loadProgram(char* filename) {
+bool chip8::loadProgram(const char* filename) {
 	std::ifstream progfile;
 	progfile.open(filename, std::ifstream::binary);
 	if (progfile.fail()) {
@@ -88,7 +88,7 @@ void chip8::emulateCycle() {
 	if (debugMode) {
 		std::cout << std::hex << pc << " " << currentOpcode << std::endl << std::dec;
 	}
-
+	
 	//OPCODE DESCRIPTIONS ARE FROM WIKIPEDIA
 	//https://en.wikipedia.org/wiki/CHIP-8#Virtual_machine_description
 	switch (currentOpcode & 0xF000) {
@@ -184,6 +184,7 @@ void chip8::emulateCycle() {
 			break;
 
 		case 0x0004: //8XY4: Adds VY to VX. VF is set to 1 when there's a carry, and to 0 when there is not.
+		{
 			if (V[(currentOpcode & 0x00F0) >> 4] > (0xFF - V[(currentOpcode & 0x0F00) >> 8])) {
 				V[0xF] = 1; //carry
 			}
@@ -192,6 +193,7 @@ void chip8::emulateCycle() {
 			}
 			V[(currentOpcode & 0x0F00) >> 8] += V[(currentOpcode & 0x00F0) >> 4];
 			pc += 2;
+		}
 			break;
 
 		case 0x0005: //8XY5: VY is subtracted from VX. VF is set to 0 when there's a borrow, and 1 when there is not.
@@ -224,7 +226,7 @@ void chip8::emulateCycle() {
 			break;
 
 		case 0x000E: //8XYE: Stores the most significant bit of VX in VF and then shifts VX to the left by 1
-			V[0xF] = V[(currentOpcode & 0x0F00) >> 8] >> 7;
+			V[0xF] = (V[(currentOpcode & 0x0F00) >> 8] >> 7);
 			V[(currentOpcode & 0x0F00) >> 8] <<= 1;
 			pc += 2;
 			break;
@@ -264,6 +266,9 @@ void chip8::emulateCycle() {
 		unsigned short y = V[(currentOpcode & 0x00F0) >> 4];
 		unsigned short height = currentOpcode & 0x000F;
 		unsigned short pixel;
+		unsigned short gfxIndex;
+
+	
 
 		V[0xF] = 0;
 		for (int yline = 0; yline < height; yline++) {
@@ -272,12 +277,17 @@ void chip8::emulateCycle() {
 
 			for (int xline = 0; xline < 8; xline++) {
 				if ((pixel & (0x80 >> xline)) != 0) {
-					if (gfx[(x + xline + ((y + yline) * 64)) % (64 * 32)] == 1) {
+
+					gfxIndex = (x + xline + ((y + yline) * 64)) % (64 * 32);
+					
+					
+					if (gfx[(x + xline + ((y + yline) * 64))] == 0x01) {
 						V[0xF] = 1;
 					}
-					gfx[(x + xline + ((y + yline) * 64)) % (64 * 32)] ^= 1;
+					gfx[(x + xline + ((y + yline) * 64))] ^= 0x01;
 				}
 			}
+			
 		}
 
 
@@ -344,6 +354,7 @@ void chip8::emulateCycle() {
 			break;
 
 		case 0x001E: //FX1E: Adds VX to I. VF is not affected
+		
 			if (ir + V[(currentOpcode & 0x0F00) >> 8] > 0xFFF)	// VF is set to 1 when range overflow (I+VX>0xFFF), and 0 when there isn't.
 				V[0xF] = 1;
 			else
